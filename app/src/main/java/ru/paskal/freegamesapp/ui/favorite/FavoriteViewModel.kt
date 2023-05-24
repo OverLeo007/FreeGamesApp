@@ -13,43 +13,53 @@ import ru.paskal.freegamesapp.model.Game
 import ru.paskal.freegamesapp.model.db_model.DbAccessable
 import ru.paskal.freegamesapp.model.db_model.DatabaseModel
 
+/**
+ * FavoriteViewModel - ViewModel для работы со списком избранных игр.
+ */
 class FavoriteViewModel(
-    application: Application, override val dbModel: DatabaseModel
-) : AndroidViewModel(application), DbAccessable
-{
+    application: Application,
+    override val dbModel: DatabaseModel
+) : AndroidViewModel(application), DbAccessable {
 
+    /**
+     * Список игр в избранном.
+     */
     lateinit var gamesList: MutableList<Game>
 
-
+    /**
+     * Инициализация ViewModel.
+     */
     init {
-         //EventBus.getDefault().register(this)
-         getGames()
-     }
+        getGames()
+    }
 
+    /**
+     * Получает список игр из базы данных.
+     */
     fun getGames() {
         dbModel.getAllGames(this)
     }
 
+    /**
+     * Обработчик получения списка игр из базы данных.
+     */
     override fun onGotGames(gameList: MutableList<Game>) {
         this.gamesList = gameList
         EventBus.getDefault().post(GamesGotFromDbEvent(this.gamesList))
-        Log.d("debug", "Games Sent In Favorite ${this.gamesList.size}")
-
     }
 
+    /**
+     * Обновляет список игр.
+     */
     fun refresh() {
         gamesList.clear()
         getGames()
     }
 
+    /**
+     * Удаляет игру из базы данных.
+     */
     override fun removeGameFromLiked(game: Game) {
         dbModel.deleteGame(game)
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        //EventBus.getDefault().unregister(this)
-    }
-
-
 }

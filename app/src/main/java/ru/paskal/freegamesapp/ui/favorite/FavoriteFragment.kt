@@ -30,17 +30,30 @@ import ru.paskal.freegamesapp.ui.ItemInteractListener
 import ru.paskal.freegamesapp.ui.ViewModelFactory
 
 class FavoriteFragment : Fragment() {
-
+    /**
+     * Привязка для доступа к элементам интерфейса фрагмента
+     */
     private var _binding: FragmentFavoriteBinding? = null
-
+    /**
+     * Адаптер для списка игр
+     */
     private lateinit var adapter: GamesRecycleAdapter
+    /**
+     * ViewModel для работы с данными игр
+     */
     private lateinit var viewModel: FavoriteViewModel
+
+    /**
+     * Модель базы данных для доступа к игровым данным
+     */
     private val dbModel: DatabaseModel by activityViewModels  {
         DatabaseModelFactory(
             (activity?.application as GamesApplication).database.gameItemDao()
         )
     }
-
+    /**
+     * Получение привязки к макету фрагмента.
+     */
     private val binding get() = _binding!!
 
 
@@ -87,6 +100,9 @@ class FavoriteFragment : Fragment() {
         viewModel.getGames()
     }
 
+    /**
+     * Обработчик получения списка игр из базы данных.
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onGamesGotFromDb(event: GamesGotFromDbEvent) {
         Log.d("debug", "Games Got In Favorite ${event.gameList.size}")

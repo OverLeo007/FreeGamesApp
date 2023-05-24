@@ -14,10 +14,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.paskal.freegamesapp.model.Game
 
+/**
+ * DatabaseModel - Модель базы данных для доступа к понравившимся играм.
+ *
+ * @property gameItemDao DAO для операций с таблицей понравившихся игр.
+ */
 class DatabaseModel(private val gameItemDao: GameItemDao) : ViewModel() {
 
     private var listener: AllGamesGotListener? = null
 
+    /**
+     * Преобразует объект Game в объект GameItem.
+     *
+     * @param game Игра для преобразования.
+     * @return Преобразованный объект GameItem.
+     */
     private fun convertGameToItem(game: Game) : GameItem {
         return GameItem(
             title = game.title!!,
@@ -27,6 +38,12 @@ class DatabaseModel(private val gameItemDao: GameItemDao) : ViewModel() {
         )
     }
 
+    /**
+     * Преобразует объект GameItem в объект Game.
+     *
+     * @param gameItem Объект GameItem для преобразования.
+     * @return Преобразованный объект Game.
+     */
     private fun convertItemToGame(gameItem: GameItem): Game {
         return Game(
             gameItem.title,
@@ -37,18 +54,33 @@ class DatabaseModel(private val gameItemDao: GameItemDao) : ViewModel() {
         )
     }
 
+    /**
+     * Добавляет игру в базу данных.
+     *
+     * @param game Игра для добавления.
+     */
     fun insertGame(game: Game) {
         viewModelScope.launch {
             gameItemDao.insert(convertGameToItem(game))
         }
     }
 
+    /**
+     * Удаляет игру из базы данных.
+     *
+     * @param game Игра для удаления.
+     */
     fun deleteGame(game: Game) {
         viewModelScope.launch {
             gameItemDao.delete(convertGameToItem(game))
         }
     }
 
+    /**
+     * Плдучает все игры из базы данных.
+     *
+     * @param listener Слушатель куда придет список игр.
+     */
     fun getAllGames(listener: AllGamesGotListener) {
         viewModelScope.launch {
             val games = mutableListOf<Game>()

@@ -9,9 +9,19 @@ import ru.paskal.freegamesapp.databinding.FragmentGamesItemBinding
 import com.bumptech.glide.Glide
 import ru.paskal.freegamesapp.R
 
-
+/**
+ * GamesRecycleAdapter - адаптер для отображения списка игр в RecyclerView.
+ *
+ * @param clicksListener Слушатель взаимодействия с элементами списка.
+ */
 class GamesRecycleAdapter(private val clicksListener: ItemInteractListener) : RecyclerView.Adapter<GamesRecycleAdapter.GameViewHolder>(){
 
+    /**
+     * GameViewHolder - внутренний класс, представляющий ViewHolder для элементов списка игр.
+     *
+     * @param binding Привязка к макету элемента списка.
+     * @param listener Слушатель взаимодействия с элементами списка.
+     */
     class GameViewHolder(val binding: FragmentGamesItemBinding,
                          listener: ItemInteractListener) : RecyclerView.ViewHolder(binding.root) {
         init {
@@ -62,16 +72,21 @@ class GamesRecycleAdapter(private val clicksListener: ItemInteractListener) : Re
         }
     }
 
+    /**
+     * Очищает список игр.
+     */
     fun clearGames() {
         gameList.clear()
         notifyDataSetChanged()
     }
 
+    /**
+     * Добавляет игру в список.
+     *
+     * @param game Игра, которую необходимо добавить.
+     */
     fun addGame(game: Game) {
         gameList.add(game)
         notifyItemInserted(itemCount - 1)
     }
-
-
-
 }

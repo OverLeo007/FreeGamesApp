@@ -11,11 +11,22 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.StringReader
 import java.net.URL
 
-
+/**
+ * FeedParser - Класс для парсинга игровых данных из XML-ленты.
+ */
 class FeedParser {
 
+    /**
+     * Слушатель для обработки результатов.
+     */
     private var listener: GameListParsingListener? = null
 
+    /**
+     * Метод для парсинга XML-ленты с игровыми данными.
+     *
+     * @param xmlUrl URL-адрес XML-ленты.
+     * @param listener Слушатель для обработки результатов парсинга.
+     */
     fun parse(xmlUrl: String, listener: GameListParsingListener) {
         this.listener = listener
         CoroutineScope(Dispatchers.IO).launch {

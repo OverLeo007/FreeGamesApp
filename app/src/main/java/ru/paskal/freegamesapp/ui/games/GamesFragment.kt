@@ -1,5 +1,6 @@
 package ru.paskal.freegamesapp.ui.games
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -23,23 +26,44 @@ import ru.paskal.freegamesapp.events.GamesParsedEvent
 import ru.paskal.freegamesapp.model.db_model.DatabaseModel
 import ru.paskal.freegamesapp.model.db_model.DatabaseModelFactory
 import ru.paskal.freegamesapp.GamesApplication
+import ru.paskal.freegamesapp.MainActivity
 import ru.paskal.freegamesapp.events.LikeStateChangedEvent
 import ru.paskal.freegamesapp.ui.GamesRecycleAdapter
 import ru.paskal.freegamesapp.ui.ItemInteractListener
 import ru.paskal.freegamesapp.ui.ViewModelFactory
 
+/**
+ * FavoriteFragment - Фрагмент для отображения списка избранных игр.
+ */
 class GamesFragment : Fragment() {
 
+    /**
+     * Привязка для доступа к элементам интерфейса фрагмента
+     */
     private var _binding: FragmentGamesBinding? = null
+
+    /**
+     * Адаптер для списка игр
+     */
     private lateinit var adapter: GamesRecycleAdapter
+
+    /**
+     * ViewModel для работы с данными игр
+     */
     private lateinit var viewModel: GamesViewModel
+
+    /**
+     * Модель базы данных для доступа к игровым данным
+     */
     private val dbModel: DatabaseModel by activityViewModels  {
         DatabaseModelFactory(
             (activity?.application as GamesApplication).database.gameItemDao()
         )
     }
 
-
+    /**
+     * Привязка для доступа к элементам интерфейса фрагмента
+     */
     private val binding get() = _binding!!
 
 
@@ -79,11 +103,8 @@ class GamesFragment : Fragment() {
                         .setImageResource(R.drawable.ic_no_like)
                     viewModel.removeGameFromLiked(curGame)
                 }
-
-//                EventBus.getDefault().post(LikeStateChangedEvent(curGame))
             }
         })
-        //viewModel.parseGames()
     }
 
     override fun onCreateView(
@@ -114,7 +135,11 @@ class GamesFragment : Fragment() {
         return root
     }
 
-
+    /**
+     * Обработчик события GamesParsedEvent. Добавляет игры в адаптер после успешного парсинга.
+     *
+     * @param event Событие GamesParsedEvent, содержащее список игр.
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onGamesParsed(event: GamesParsedEvent) {
         for (game in event.gameList) {
@@ -122,6 +147,11 @@ class GamesFragment : Fragment() {
         }
     }
 
+    /**
+     * Обработчик события LikeStateChangedEvent. Обновляет список игр и очищает адаптер.
+     *
+     * @param event Событие LikeStateChangedEvent, указывающее на изменение состояния "Избранное".
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onLikeStateChanged(event: LikeStateChangedEvent) {
         viewModel.refresh()
